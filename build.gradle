@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     // --- Основные зависимости (для src/main/java) ---
-    implementation 'com.codeborne:selenide:6.19.1'
+    implementation 'com.codeborne:selenide:7.12.3'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
 
     // --- Зависимости только для тестов ---
