@@ -12,7 +12,7 @@ public class FilterPage {
     // --- ИСПОЛЬЗУЕМ РАБОЧИЙ СЕЛЕКТОР ИЗ КОДА №2 ---
     // Кнопка фильтра локации (SPB)
     private final SelenideElement locationFilterButton = $("[data-qa-id='movies_filter_location_select']").parent();
-
+    // --- ИСПРАВЛЕНО: Кнопка фильтра жанра ---
     private final SelenideElement genreFilterButton = $$(".w-36 button[role='combobox']").get(1);
 
     // Карточка фильма (ID 689)

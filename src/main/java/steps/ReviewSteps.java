@@ -1,23 +1,22 @@
+// src/main/java/steps/ReviewSteps.java
 package steps;
 
 import pages.MoviePage;
 
 public class ReviewSteps {
+
     private final MoviePage moviePage = new MoviePage();
 
     public void publishReview(String text, int rating) {
         moviePage.publishReview(text, rating);
     }
 
-    public boolean isSuccessMessageDisplayed() {
-        return moviePage.isReviewSuccessMessageDisplayed();
+    // --- ИСПРАВЛЕНО: Используем правильные имена методов из MoviePage ---
+    public boolean isReviewPublishedSuccessfully() {
+        return moviePage.isReviewPublishedSuccessfully(); // <- Совпадает с именем в MoviePage
     }
 
-    public String getSuccessMessage() {
-        return moviePage.getSuccessMessageText();
-    }
-
-    public String getPublishedReviewText() {
-        return moviePage.getSuccessMessageText();
+    public String getReviewConfirmationMessage() {
+        return moviePage.getReviewConfirmationMessage(); // <- Совпадает с именем в MoviePage
     }
 }
