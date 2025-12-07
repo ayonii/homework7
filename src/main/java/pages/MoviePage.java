@@ -1,62 +1,54 @@
+// src/main/java/pages/MoviePage.java
 package pages;
 
 import com.codeborne.selenide.SelenideElement;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Condition.visible;
+import org.openqa.selenium.By;
 
 public class MoviePage {
 
     // Кнопка "Купить билет" на странице фильма
-    public SelenideElement buyTicketButton = $("[data-qa-id='shopping_cart_button']"); // Нет точного data-qa-id, используем текст или другой селектор
-    // Но на основе HTML, у кнопки нет уникального data-qa-id, поэтому используем:
-    // Найдем по тексту "Купить билет"
-    // Однако, для отзывов нам это не нужно.
+    private final SelenideElement buyTicketButton = $("[data-qa-id='buy-ticket-button']");
 
     // Поле ввода отзыва
-    public SelenideElement reviewTextarea = $("[data-qa-id='movie_review_input']");
+    private final SelenideElement reviewTextarea = $("[data-qa-id='movie_review_input']");
 
     // Кнопка отправки отзыва
-    public SelenideElement submitReviewButton = $("[data-qa-id='movie_review_submit_button']");
+    private final SelenideElement submitReviewButton = $("[data-qa-id='movie_review_submit_button']");
 
-    // Селектор рейтинга (выпадающий список с рейтингом)
-    // На странице review.txt: <select> внутри кнопки, но Selenide может работать с кнопкой
-    // Лучше найти сам select или использовать кнопку и выбирать через неё
-    // Для простоты, предположим, что мы можем установить значение напрямую в скрытый select
-    // Но в HTML он скрыт! Поэтому будем кликать на кнопку и выбирать опцию.
-    // Пока оставим простой способ: найти кнопку рейтинга.
-    public SelenideElement ratingSelectButton = $("[data-qa-id='movie_rating_select']").parent();
+    // Кнопка выбора рейтинга (всплывающее меню)
+    private final SelenideElement ratingSelectButton = $("[data-qa-id='movie_rating_select']").parent();
 
     // Успешное сообщение об отзыве (по классу из acceptedreview.txt)
-    public SelenideElement successMessage = $(".go3958317564");
+    private final SelenideElement successMessage = $(".go3958317564");
 
     // Заголовок фильма (для проверки)
-    public SelenideElement movieTitle = $("h2"); // Первый h2 — это название фильма
+    private SelenideElement movieTitle = $("h2");
 
-    /**
-     * Публикует отзыв
-     *
-     * @param reviewText текст отзыва
-     * @param rating     оценка от 1 до 5
-     */
     public void publishReview(String reviewText, int rating) {
+        System.out.println("📝 Вводим текст отзыва...");
         reviewTextarea.setValue(reviewText);
 
-        // Открываем выпадающий список рейтинга и выбираем нужную опцию
+        System.out.println("⭐ Выбираем оценку '" + rating + "'...");
         ratingSelectButton.click();
-        $("[role='listbox'] option[value='" + rating + "']").click(); // Упрощённо, может не сработать
-        // Альтернатива: используем селектор по select
-        // Но select скрыт! Поэтому лучший способ — найти все кнопки-опции
-        // Исходя из HTML, опции — это <option> внутри скрытого <select>
-        // Selenide может взаимодействовать со скрытыми элементами через JS
-        $("#movie_rating_select ~ select").selectOptionByValue(String.valueOf(rating));
 
+        // --- ИСПРАВЛЕНО: Используем XPath для поиска опции с текстом ---
+        String ratingText = String.valueOf(rating);
+        // Ищем div с role='listbox', затем внутри него div с role='option', внутри которого span с нужным текстом
+        SelenideElement ratingOption = $(By.xpath("//div[@role='listbox']//div[@role='option']//span[text()='" + ratingText + "']/.."));
+        ratingOption.shouldBe(visible).click(); // Явно ждём видимости и кликаем
+
+        System.out.println("📤 Нажимаем кнопку 'Отправить отзыв'...");
         submitReviewButton.click();
     }
 
-    public boolean isReviewSuccessMessageDisplayed() {
-        return successMessage.isDisplayed();
+    public boolean isReviewPublishedSuccessfully() {
+        System.out.println("✅ Проверяем, отобразилось ли сообщение об успешной публикации отзыва...");
+        return successMessage.shouldBe(visible).isDisplayed();
     }
 
-    public String getSuccessMessageText() {
+    public String getReviewConfirmationMessage() {
         return successMessage.getText();
     }
 }

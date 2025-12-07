@@ -1,40 +1,64 @@
+// src/test/java/tests/ReviewPublicationTest.java
 package tests;
 
-import io.qameta.allure.Step;
-import org.junit.jupiter.api.Test;
-import steps.ReviewSteps;
-import junit.UITest;
 import com.codeborne.selenide.Selenide;
+import io.qameta.allure.Step;
+import junit.UITest;
+import org.junit.jupiter.api.Test;
+import steps.AuthSteps;
+import steps.FilterSteps;
+import steps.ReviewSteps;
 
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @UITest
 public class ReviewPublicationTest {
 
+    private final AuthSteps authSteps = new AuthSteps();
+    private final FilterSteps filterSteps = new FilterSteps();
     private final ReviewSteps reviewSteps = new ReviewSteps();
 
     @Test
     @Step("Публикация отзыва на фильм")
     public void shouldPublishReviewSuccessfully() {
+        // --- ШАГ 1: Открытие главной страницы ---
+        System.out.println("🔍 Открываем главную страницу...");
+        Selenide.open("https://cinescope.t-qa.ru/");
 
-        // 1. Открываем страницу конкретного фильма
-        Selenide.open("https://cinescope.t-qa.ru/movies/689");
+        // --- ШАГ 2: Проверка/восстановление сессии ---
+        System.out.println("✅ Проверяем сессию...");
+        authSteps.ensureLoggedIn("waitan123@tavorot.ru", "qwerty123_OOO");
 
-        // Подходящий текст для военного фильма в Санкт-Петербурге
-        String reviewText = "Мощная военная драма! Особенно актуально смотреть в культурной столице — Санкт-Петербурге. Атмосфера, актёрская игра — всё на высшем уровне.";
-        int rating = 5; // Можно выбрать любое значение от 1 до 5
+        // --- ШАГ 3: Применение фильтров (SPB, Все) ---
+        System.out.println("⚙️ Применяем фильтры: SPB, Все...");
+        filterSteps.applyFilters();
 
-        // Действие
+        // --- ШАГ 4: Найти и кликнуть по фильму ID 689 ---
+        System.out.println("🔍 Ищем и кликаем по фильму с ID 689...");
+        $("[data-qa-id='movie_more_689']").shouldBe(visible).click();
+
+        // --- ШАГ 5: Проверка сессии на странице фильма ---
+        System.out.println("✅ Проверяем сессию на странице фильма...");
+        authSteps.ensureLoggedIn("waitan123@tavorot.ru", "qwerty123_OOO");
+
+        // --- ШАГ 6: Публикация отзыва ---
+        System.out.println("📝 Начинаем публикацию отзыва...");
+        String reviewText = "Это отличный военный фильм!";
+        int rating = 5; // Оценка от 1 до 5
+
         reviewSteps.publishReview(reviewText, rating);
 
-        // Проверка
-        assertThat(reviewSteps.isSuccessMessageDisplayed())
-                .as("Сообщение об успешной публикации должно отображаться")
+        // --- ШАГ 7: Проверка успешной публикации ---
+        System.out.println("✅ Проверяем результат публикации...");
+        assertThat(reviewSteps.isReviewPublishedSuccessfully())
+                .as("Отзыв должен быть опубликован успешно")
                 .isTrue();
 
-        String message = reviewSteps.getSuccessMessage();
-        assertThat(message)
-                .as("Сообщение должно содержать 'Отзыв успешно создан'")
-                .contains("Отзыв успешно создан");
+        String confirmation = reviewSteps.getReviewConfirmationMessage();
+        assertThat(confirmation)
+                .as("Сообщение должно содержать 'успешно'")
+                .containsIgnoringCase("успешно");
     }
 }

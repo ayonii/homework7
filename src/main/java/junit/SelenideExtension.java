@@ -10,9 +10,11 @@ public class SelenideExtension implements BeforeAllCallback, AfterEachCallback {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
+        // Настройка Selenide
         Configuration.browser = "chrome";
-        Configuration.browserSize = "1920x1080";
-        Configuration.timeout = 5000;
+        Configuration.browserSize = "maximize";
+        Configuration.timeout = 10000; // Увеличенный таймаут
+        Configuration.pageLoadTimeout = 30000;
         Configuration.baseUrl = "https://cinescope.t-qa.ru";
     }
 

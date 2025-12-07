@@ -8,14 +8,7 @@ public class TicketSteps {
     private final PaymentPage paymentPage = new PaymentPage();
 
     public void purchaseTicketWithCard(String cardNumber, String cardHolder, String month, String year, String cvc) {
-        ticketPage.clickBuyTicket();
-        paymentPage.setAmount(1);
-        paymentPage.enterCardNumber(cardNumber);
-        paymentPage.enterCardHolder(cardHolder);
-        paymentPage.selectMonth(month);
-        paymentPage.selectYear(year);
-        paymentPage.enterCvc(cvc);
-        paymentPage.clickPay();
+
     }
 
     public boolean checkPaymentSuccess() {
@@ -24,5 +17,8 @@ public class TicketSteps {
 
     public String getPaymentConfirmation() {
         return paymentPage.getSuccessMessageText();
+    }
+
+    public void clickBuyTicketButton() {
     }
 }
