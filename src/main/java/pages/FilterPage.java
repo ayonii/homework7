@@ -1,3 +1,4 @@
+// src/main/java/pages/FilterPage.java
 package pages;
 
 import com.codeborne.selenide.Selenide;
@@ -8,49 +9,49 @@ import org.openqa.selenium.By;
 
 public class FilterPage {
 
+    // --- ИСПОЛЬЗУЕМ РАБОЧИЙ СЕЛЕКТОР ИЗ КОДА №2 ---
     // Кнопка фильтра локации (SPB)
     private final SelenideElement locationFilterButton = $("[data-qa-id='movies_filter_location_select']").parent();
+
+    private final SelenideElement genreFilterButton = $$(".w-36 button[role='combobox']").get(1);
 
     // Карточка фильма (ID 689)
     private final SelenideElement movieCard689 = $("[data-qa-id='movie_more_689']");
 
     public void selectLocationSPB() {
         System.out.println("🖱️ Кликаем по кнопке фильтра локации...");
+        // Убираем проверку shouldBe(visible) из PageObject, так как FilterSteps уже обеспечил её
         locationFilterButton.click();
 
-        // Ждём, пока выпадающий список появится
-        System.out.println("⏳ Ждём появления выпадающего списка для локации...");
+        // --- ИСПОЛЬЗУЕМ РАБОЧУЮ ЛОГИКУ ИЗ КОДА №1 ---
+        System.out.println("⏳ Ждём появления списка опций для локации...");
         SelenideElement listBox = $(By.xpath("//div[@role='listbox']")).shouldBe(visible);
 
         // Ищем опцию "SPB" *внутри* найденного списка
-        System.out.println("🖱️ Ищем и кликаем по опции 'SPB' внутри списка...");
-        listBox.$(By.xpath(".//div[@role='option' and contains(., 'SPB')]")).click();
+        System.out.println("🔍 Ищем и кликаем по опции 'SPB' внутри списка...");
+
+        SelenideElement spbOption = listBox.$(By.xpath(".//div[@role='option']//span[text()='SPB']"));
+        spbOption.shouldBe(visible).click(); // Явно ждём видимости и кликаем
 
         Selenide.sleep(5000); // Задержка после выбора
     }
 
     public void selectGenreMilitary() {
-        // 🆕 Уточнённый XPath для поиска кнопки фильтра жанра
-        // Ищем вторую кнопку role="combobox" внутри контейнера с фильтрами
-        System.out.println("🔍 Ищем кнопку фильтра жанра (ожидаем, что это вторая кнопка в группе фильтров)...");
-        SelenideElement genreFilterButton = $(By.xpath("//main[@class='py-10']//div[@class='flex h-full gap-5 items-center']//div[@class='w-36'][2]//button[@role='combobox']"));
-
-        // Если и это не сработает, можно попробовать найти *все* кнопки combobox и взять вторую:
-        // SelenideElement genreFilterButton = $$(By.xpath("//button[@role='combobox']")).get(1);
-
         System.out.println("🖱️ Кликаем по кнопке фильтра жанра...");
-        genreFilterButton.click(); // Кнопка фильтра жанра
 
-        // Ждём, пока выпадающий список появится
-        System.out.println("⏳ Ждём появления выпадающего списка для жанра...");
+        // --- ИСПОЛЬЗУЕМ ИСПРАВЛЕННЫЙ СЕЛЕКТОР КНОПКИ ---
+        genreFilterButton.shouldBe(visible);
+        genreFilterButton.click();
+
+        // --- ИСПОЛЬЗУЕМ РАБОЧУЮ ЛОГИКУ ИЗ КОДА №1 ---
+        System.out.println("⏳ Ждём появления списка опций для жанра...");
         SelenideElement listBox = $(By.xpath("//div[@role='listbox']")).shouldBe(visible);
 
         // Ищем опцию "Военный" *внутри* найденного списка
-        // В HTML 'открытый военный.txt' текст "Военный" находится внутри <span>
-        System.out.println("🖱️ Ищем и кликаем по опции 'Военный' внутри списка...");
-        // listBox.$(By.xpath(".//div[@role='option']//span[contains(., 'Военный')]")).click();
-        // Попробуем более простой селектор, если span не обязателен:
-        listBox.$(By.xpath(".//div[@role='option' and contains(., 'Военный')]")).click();
+        System.out.println("🔍 Ищем и кликаем по опции 'Военный' внутри списка...");
+
+        SelenideElement militaryOption = listBox.$(By.xpath(".//div[@role='option']//span[text()='Военный']"));
+        militaryOption.shouldBe(visible).click(); // Явно ждём видимости и кликаем
 
         Selenide.sleep(5000); // Задержка после выбора
     }

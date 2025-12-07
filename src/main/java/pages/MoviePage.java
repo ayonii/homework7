@@ -17,12 +17,6 @@ public class MoviePage {
     // Кнопка отправки отзыва
     public SelenideElement submitReviewButton = $("[data-qa-id='movie_review_submit_button']");
 
-    // Селектор рейтинга (выпадающий список с рейтингом)
-    // На странице review.txt: <select> внутри кнопки, но Selenide может работать с кнопкой
-    // Лучше найти сам select или использовать кнопку и выбирать через неё
-    // Для простоты, предположим, что мы можем установить значение напрямую в скрытый select
-    // Но в HTML он скрыт! Поэтому будем кликать на кнопку и выбирать опцию.
-    // Пока оставим простой способ: найти кнопку рейтинга.
     public SelenideElement ratingSelectButton = $("[data-qa-id='movie_rating_select']").parent();
 
     // Успешное сообщение об отзыве (по классу из acceptedreview.txt)

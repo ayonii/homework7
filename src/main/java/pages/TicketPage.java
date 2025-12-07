@@ -1,11 +1,13 @@
 package pages;
 
 import com.codeborne.selenide.SelenideElement;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class TicketPage {
-    // Кнопка "Купить" на странице фильма (предполагаем, что она есть)
-    private SelenideElement buyTicketButton = $("[data-qa-id='buy_ticket_button']");
+
+    // Ищем кнопку по тексту "Купить билет" внутри неё
+    private final SelenideElement buyTicketButton = $(withText("Купить билет")); // ✅ ПРАВИЛЬНО
 
     public void clickBuyTicket() {
         buyTicketButton.click();
